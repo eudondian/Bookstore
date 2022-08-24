@@ -3,7 +3,7 @@ import BookList from './BookList';
 import Form from './Form';
 
 const Books = () => {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState([{ id: '1', title: 'The Road to BarBeach', author: 'Sam Eyo' }]);
 
   const addBooks = () => setBooks();
 
