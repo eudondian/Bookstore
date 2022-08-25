@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import BookList from './BookList';
 import Form from './Form';
 
-const Books = () => {
-  const [books, setBooks] = useState([{ id: '1', title: 'The Road to BarBeach', author: 'Sam Eyo' }]);
-
-  const addBooks = () => setBooks();
+const ShowBooks = () => {
+  const books = useSelector((state) => state.books);
 
   return (
     <div>
-      {books.map((books) => (
+      {books.map((book) => (
         <BookList
-          key={books.id}
-          title={books.title}
-          author={books.author}
+          key={book.id}
+          id={book.id}
+          title={book.title}
+          author={book.author}
+          progress={book.progress}
+          chapter={book.chapter}
+          genre={book.genre}
         />
       ))}
-      <Form addBooks={addBooks} />
+      <Form />
     </div>
   );
 };
 
-export default Books;
+export default ShowBooks;
