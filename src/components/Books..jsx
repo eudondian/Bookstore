@@ -14,6 +14,9 @@ const ShowBooks = () => {
           id={book.id}
           title={book.title}
           author={book.author}
+          progress={book.progress}
+          chapter={book.chapter}
+          genre={book.genre}
         />
       ))}
       <Form />
