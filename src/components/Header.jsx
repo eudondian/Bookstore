@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Avatar } from '@mui/material';
+import { CgProfile } from 'react-icons/cg';
 
 const Header = () => (
   <nav>
@@ -9,7 +9,7 @@ const Header = () => (
       <li><Link className="links" to="/">Book</Link></li>
       <li><Link className="links" to="/categories">Categories</Link></li>
     </ul>
-    <Avatar />
+    <CgProfile className="avatar" />
   </nav>
 );
 
