@@ -1,70 +1,63 @@
-const ADD_NEW_BOOK = 'bookstore/books/ADD_NEW_BOOK';
-const DELETE_BOOK = 'bookstore/books/DELETE_BOOK';
-const BookArr = [
-  {
-    id: 1,
-    title: 'Merchant of Vernice',
-    author: 'William Shakespear',
-    progress: 14,
-    chapter: 2,
-    genre: 'Shakespearean comedy',
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+// Set Action
+const ADD_BOOK = 'bookstore/books/ADD_BOOK';
+const REMOVE_BOOK = 'bookstore/books/REMOVE_BOOK';
+const FETCH_BOOKS = 'bookstore/books/FETCH_BOOK';
+
+// Initialize an empty array for the books
+const books = [];
+
+export const addedBooks = createAsyncThunk(
+  ADD_BOOK,
+  async (item) => {
+    await axios.post('https://us-central1-bookstore-api-e63c8.cloudfunctions.net/bookstoreApi/apps/BZgwqZ2DNziuT17roN8k/books', {
+      item_id: item.id,
+      title: item.title,
+      author: item.author,
+      category: item.category,
+    });
+    return {
+      book: [
+        item.id,
+        [{
+          author: item.author,
+          title: item.title,
+          category: item.category,
+        }],
+      ],
+    };
   },
-  {
-    id: 2,
-    title: 'Robinson Crusoe',
-    author: 'Daniel Defoe',
-    progress: 45,
-    chapter: 12,
-    genre: 'Adventure Fiction',
-  },
-  {
-    id: 3,
-    title: 'Mutanda Oyom Namondo',
-    author: 'Nsentip Nsentip',
-    progress: 53,
-    chaper: 8,
-    genre: 'novel',
-  },
-  {
-    id: 4,
-    title: 'Finding Solace',
-    author: 'Tobi Loba',
-    progress: 35,
-    chapter: 12,
-    genre: 'romance',
-  },
-  {
-    id: 5,
-    title: 'Beyond Captivating',
-    author: 'OP. Amina',
-    progress: 25,
-    chapter: 13,
-    genre: 'fiction',
-  },
-];
-const bookReducer = (state = BookArr, action) => {
+);
+
+// Delete API Books
+export const deleteBookFromApi = createAsyncThunk(REMOVE_BOOK, async (id) => {
+  await axios.delete(`https://us-central1-bookstore-api-e63c8.cloudfunctions.net/bookstoreApi/apps/BZgwqZ2DNziuT17roN8k/books/${id}`);
+  return { id };
+});
+
+// Create a Reducer
+const bookReducer = (state = books, action) => {
   switch (action.type) {
-    case ADD_NEW_BOOK:
-      return [
-        ...state, action.book,
-      ];
-    case DELETE_BOOK:
-      return state.filter((book) => book.id !== action.id);
+    case `${FETCH_BOOKS}/fulfilled`:
+      return action.payload.books;
+    case `${ADD_BOOK}/fulfilled`:
+      return [...state, action.payload.book];
+    case `${REMOVE_BOOK}/fulfilled`:
+      return state.filter((item) => item[0] !== action.payload.id);
     default:
       return state;
   }
 };
 
-export const addedbooks = (book) => ({
-
-  type: ADD_NEW_BOOK,
-  book,
-
-});
-
-export const deletedBooks = (id) => ({
-  type: DELETE_BOOK,
-  id,
-});
+// Fetch Books from API
+export const fetchBooksFromApi = createAsyncThunk(
+  FETCH_BOOKS,
+  async () => {
+    const { data } = await axios.get('https://us-central1-bookstore-api-e63c8.cloudfunctions.net/bookstoreApi/apps/BZgwqZ2DNziuT17roN8k/books');
+    return { books: Object.entries(data) };
+  },
+);
 
 export default bookReducer;

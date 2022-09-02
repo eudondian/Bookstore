@@ -1,53 +1,45 @@
+import { v4 as uuid } from 'uuid';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addedbooks } from '../redux/books/books';
+import { addedBooks } from '../redux/books/books';
 
 const Form = () => {
   const dispatch = useDispatch();
-  const [form, setForm] = useState({ title: '', author: '' });
-  const handleChange = (e) => {
-    e.preventDefault();
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
 
-    if (form.title.trim() && form.author.trim()) {
-      const data = {
-        id: Date.now(),
-        title: form.title,
-        author: form.author,
-      };
-      dispatch(addedbooks(data));
-      setForm({ title: '', author: '' });
+  const addedBook = (event) => {
+    event.preventDefault();
+    const book = {
+      id: uuid(),
+      title,
+      author,
+      category: `${['Thriller', 'Fiction', 'Economy', 'Comedy'][Math.floor(Math.random() * ['Thriller', 'Fiction', 'Economy', 'Comedy'].length)]}`,
+    };
+    if (title.length && author.length) {
+      dispatch(addedBooks(book));
+      setTitle('');
+      setAuthor('');
     }
   };
+
+  const newlyAddedTitle = (event) => {
+    setTitle(event.target.value);
+  };
+  const newlyAddedAuthor = (event) => {
+    setAuthor(event.target.value);
+  };
+
   return (
-    <div>
-      <h2>ADD NEW BOOK</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="title"
-          type="text"
-          placeholder="Book title"
-          value={form.title}
-          onChange={handleChange}
-        />
-        <input
-          name="author"
-          type="text"
-          placeholder="Category"
-          value={form.author}
-          onChange={handleChange}
-        />
-        <button type="submit">
-          ADD BOOK
-        </button>
+    <div className="form-container">
+      <h3>Add New Book</h3>
+      <form onSubmit={addedBook}>
+        <input placeholder="Book Title" value={title} onChange={newlyAddedTitle} required />
+        <input placeholder="Author" value={author} onChange={newlyAddedAuthor} required />
+        <button type="submit">Add Book</button>
       </form>
     </div>
   );
 };
+
 export default Form;
